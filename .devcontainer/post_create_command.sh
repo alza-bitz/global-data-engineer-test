@@ -10,7 +10,8 @@ curl https://install.duckdb.org | sh
 # npm install duckdb-async@0.10.2
 
 # Bash completion for DBT
-# curl https://raw.githubusercontent.com/fishtown-analytics/dbt-completion.bash/master/dbt-completion.bash > /tmp/dbt-completion.bash
-# echo 'source /tmp/dbt-completion.bash' >> ~/.profile
+# curl https://raw.githubusercontent.com/fishtown-analytics/dbt-completion.bash/master/dbt-completion.bash > ~/.dbt-completion.bash
+# echo 'source ~/.dbt-completion.bash' >> ~/.profile
+
 # sudo mkdir -p /etc/bash_completion.d
 # sudo echo 'source /tmp/.dbt-completion.bash' > /etc/bash_completion.d/dbt

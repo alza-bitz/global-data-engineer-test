@@ -23,9 +23,9 @@ You also have reference files:
 - episodes (episode_id, podcast_id, episode_title, release_date)
 
 ### Example Data
-- [events.json](../../data/events.json) (sample of raw event logs)
-- [users.csv](../../data/users.csv) (user reference data)
-- [episodes.csv](../../data/episodes.csv) (episode reference data)
+- [events.json](../../example_data/event_logs.json) (sample of raw event logs)
+- [users.csv](../../example_data/users.csv) (user reference data)
+- [episodes.csv](../../example_data/episodes.csv) (episode reference data)
 
 ## Part 1: Data Modelling
 Design a relational schema that: 

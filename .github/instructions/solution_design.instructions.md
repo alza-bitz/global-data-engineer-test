@@ -137,6 +137,8 @@ data/
 ```
 However, we cannot guarantee these files won't contain duplicates of data already loaded. Therefore, the "transform: cleanse and normalise" step will include a de-duplication rule to ensure that the cleansed model has no duplicates.
 
+Note: For each of the three transformation steps that follow, DBT tests must be created to ensure the transformations work as expected.
+
 ### 2. Transform: Validation
 Validate any "new" event data in the raw model by applying checks according to the "data quality validation" requirements, updating any invalid records in the model with the validation errors found.
 
@@ -161,8 +163,6 @@ More specifically, the cleansing and normalisation rules are:
 
 ### 4. Transform: Analytics
 Take any "new" event data from the cleansed model and any "new" reference data from the raw model and transform it to the analytics model.
-
-For each of the three transformation steps, DBT tests must be implemented to ensure the transformations work as expected.
 
 ### Data Pipeline Step Co-ordination and Scheduling
 TODO

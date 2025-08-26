@@ -1,0 +1,55 @@
+name: podcast_analytics
+version: '1.0.0'
+config-version: 2
+
+profile: podcast_analytics
+
+model-paths: ["models"]
+analysis-paths: ["analyses"]
+test-paths: ["tests"]
+seed-paths: ["seeds"]
+macro-paths: ["macros"]
+snapshot-paths: ["snapshots"]
+
+target-path: "target"
+clean-targets:
+  - "target"
+  - "dbt_packages"
+
+# Model configurations following Medallion Architecture
+models:
+  podcast_analytics:
+    # Raw models (Bronze layer) - materialized as tables for data persistence
+    raw:
+      +materialized: table
+      +schema: raw
+    # Cleansed models (Silver layer) - materialized as tables for incremental processing and deduplication
+    cleansed:
+      +materialized: table
+      +incremental_strategy: merge
+      +schema: cleansed
+    # Analytics/marts models (Gold layer) - materialized as tables for performance
+    analytics:
+      +materialized: table
+      +schema: analytics
+
+# Seed configurations
+seeds:
+  podcast_analytics:
+    +schema: raw
+    users:
+      +column_types:
+        user_id: varchar(50)
+        signup_date: date
+        country: varchar(10)
+    episodes:
+      +column_types:
+        episode_id: varchar(50)
+        podcast_id: varchar(50)
+        title: varchar(200)
+        release_date: date
+        duration_seconds: integer
+
+# Variables for file paths
+vars:
+  events_json_path: 'example_data/event_logs.json'

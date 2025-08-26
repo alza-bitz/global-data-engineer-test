@@ -1,0 +1,18 @@
+version: 2
+
+models:
+  - name: raw_events
+    description: "Raw events loaded from JSON source with validation_errors column for future validation step"
+    columns:
+      - name: event_type
+        description: "Type of user interaction (play, pause, seek, complete) - may contain nulls or invalid values"
+      - name: user_id
+        description: "User identifier - may contain nulls or invalid values"
+      - name: episode_id
+        description: "Episode identifier - may contain nulls or invalid values"
+      - name: timestamp
+        description: "ISO timestamp string of the event - may contain nulls or invalid values"
+      - name: duration
+        description: "Duration in seconds (as string), only for play/complete events - may contain nulls or invalid values"
+      - name: validation_errors
+        description: "JSON array of validation errors, null for records not yet validated"

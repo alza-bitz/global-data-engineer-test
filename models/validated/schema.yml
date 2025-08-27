@@ -1,0 +1,10 @@
+version: 2
+
+models:
+  - name: raw_events_validated
+    description: "Raw events loaded from JSON source with validation_errors column for validation step"
+    extends: 
+      - raw.raw_events
+    columns:
+      - name: validation_errors
+        description: "Array of validation errors"

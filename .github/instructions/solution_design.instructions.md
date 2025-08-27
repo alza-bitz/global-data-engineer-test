@@ -2,26 +2,26 @@
 applyTo: '**'
 ---
 
+# Global Senior Data Engineer Take-Home Test
+
 This solution design composes the ELT and Medallion Architecture patterns, with DBT used for data loading, data models and data transformations. The target database for local development is DuckDB, as it supports both CSV and JSON data formats natively, and is also supported by DBT. The target database for production will be Snowflake, using my personal trial account.
 
 ## Part 1: Data Modelling
 
-Given an ELT approach, there will be three models in DBT: 
+Given an ELT approach, there will be four models in DBT: 
 
-1. A "raw" model to hold loaded data from all three sources and also the results of running checks based on the "data quality validation" in part 2 of the requirements
+1. A "raw" model to hold loaded data from all three sources
+2. A "validated" model to hold the results of running checks based on the "data quality validation" in part 2 of the requirements
 3. A "cleansed" model to hold the results of the "clean and normalise the events" in part 2 of the requirements
 4. An "analytics" model to support the SQL analysis questions in part 3 of the requirements.
 
 ### Raw Model (Bronze)
-The raw model would consist of three tables, one for the raw event data and two for the reference data.
+The raw model will consist of three tables, one for the raw event data and two for the reference data.
 
 #### DBT Configuration
-- Materialized: table (source of truth, validation errors will be updated in place)
+- Materialized: table (source of truth)
 
-#### Raw Event Table
-To hold raw event data. Since the JSON schema is not nested, we can use the duckdb features to directly load the JSON data into a flat table.
-
-It will hold both valid records and invalid records for further investigation. The determination of valid vs invalid records would be based on the "data quality validation" requirements.
+#### Tables
 
 - **raw_events**
   - event_type (VARCHAR)
@@ -29,19 +29,16 @@ It will hold both valid records and invalid records for further investigation. T
   - episode_id (VARCHAR)
   - timestamp (VARCHAR)
   - duration (VARCHAR)
-  - validation_errors (JSON) -- validation errors if any
+  - load_at (TIMESTAMP, not nullable, default current_timestamp())
 
-With all columns nullable; we assume the event data may have missing values, and validation_errors is also nullable for valid records.
+With all columns nullable; we assume the event data may have missing values. Since the JSON schema for events is not nested, we can use the duckdb features to directly load the JSON event data into a flat table.
 
-#### Raw Reference Tables
-To hold all the user and episode reference data.
-
-- **raw_users**
+- **users**
   - user_id (VARCHAR)
   - signup_date (DATE)
   - country (VARCHAR)
 
-- **raw_episodes**
+- **episodes**
   - episode_id (VARCHAR)
   - podcast_id (VARCHAR)
   - title (VARCHAR)
@@ -50,11 +47,24 @@ To hold all the user and episode reference data.
 
 With all columns not nullable and column types matching what is defined for the "analytics" model; we assume reference data is exported from normalised tables in an RDBMS, and therefore is already integrity-checked and complete.
 
-### Cleansed Model (Silver)
-The cleansed model would consist of one table, to hold the result of cleaning and normalising "new" and valid event data.
+### Validated Model (Bronze)
+The validated model will consist of one table to hold both valid and invalid events for further investigation. The determination of valid vs invalid records will be based on the "data quality validation" requirements.
 
 #### DBT Configuration
-- Materialized: table (intermediate state, incremental processing of "new" data, de-duplication)
+- Materialized: incremental (to process only "new" data since last run, determined by load_at column)
+- Incremental strategy: append
+
+#### Tables
+
+- **raw_events_validated**
+As per raw_events, plus:
+  - validation_errors (VARCHAR[], not nullable) -- list of validation errors or empty list if none
+
+### Cleansed Model (Silver)
+The cleansed model will consist of one table, to hold the result of cleaning and normalising "new" and valid event data.
+
+#### DBT Configuration
+- Materialized: incremental (to process only "new" and valid data since last run, determined by load_at column and validation_errors column)
 - Incremental strategy: merge (for de-duplication)
 
 #### Tables
@@ -66,7 +76,7 @@ The cleansed model would consist of one table, to hold the result of cleaning an
   - duration (INTEGER, nullable for non-play/complete events)
 
 ### Analytics Model (Gold)
-To support the analysis questions in part 3 of the requirements, the analytics model would use a star schema.
+To support the analysis questions in part 3 of the requirements, the analytics model will use a star schema.
 
 #### DBT Configuration
 - Materialized: table (performance for analytics)
@@ -89,10 +99,12 @@ To support the analysis questions in part 3 of the requirements, the analytics m
   - title (VARCHAR)
   - release_date (DATE)
   - duration_seconds (INTEGER)
+
 ### Justification
 - The star schema allows for efficient querying and aggregation, which is ideal for analytics.
 - The fact table captures all user interactions, while the dimension tables provide context for users and episodes.
 - Indexes on foreign keys and frequently queried fields (e.g., event_type, timestamp) will improve query performance.
+
 ### ERD Diagram
 ```mermaid
 erDiagram
@@ -125,7 +137,7 @@ The overall pipeline for the DuckDB target would be implemented as the following
 
 ### 1. Extract and Load
 - Full load of users and episodes data from CSV files into their own raw tables, using DBT seeds. Acceptable since these are reference data and assumed to be relatively small and stable.
-- Incremental load of any "new" event JSON data into the raw table, using an external table and an incremental DBT model with timestamp-based filtering.
+- Incremental load of any "new" event JSON data files into the raw table, using an "external" table.
 
 Note: "new" data would typically be provided as new files, for example:
 ```
@@ -140,22 +152,25 @@ However, we cannot guarantee these files won't contain duplicates of data alread
 Note: For each of the three transformation steps that follow, DBT tests must be created to ensure the transformations work as expected.
 
 ### 2. Transform: Validation
-Validate any "new" event data in the raw model by applying checks according to the "data quality validation" requirements, updating any invalid records in the model with the validation errors found.
+Validate any "new" event data in the raw model by applying checks according to the "data quality validation" requirements, updating the validated model with validated events.
 
 More specifically, the data quality checks are:
 - Columns needing not-null checks: user_id, episode_id and timestamp
 - Columns needing "string not empty or blank" checks: user_id and episode_id
-- Columns needing "timestamp" checks: timestamp must be a valid timestamp
+- Columns needing "value in set" checks: event_type must be one of play, pause, seek or complete
+- Columns needing "timestamp" checks: timestamp must be a valid timestamp in ISO 8601 format with seconds precision
 - Columns needing "timestamp range" checks: timestamp must be within a reasonable range (e.g. not in the future, not before 2000-01-01)
 - Columns needing "time duration" checks: duration must be a positive integer for play and complete events, and null for other event types
 
-Note: the data quality checks in step 2 must be compatible with the cleansing rules in step 3, i.e. any record that passes validation must be able to be cleansed without any errors.
+Note 1: the data quality checks in step 2 must be compatible with the cleansing rules in step 3, i.e. any record that passes validation must be able to be cleansed without any errors.
+
+Note 2: if any data quality checks are modified, then validation_errors must be re-calculated for all records in the raw model, not just "new" records. This can be done by running the DBT model in full-refresh mode.
 
 ### 3. Transform: Cleanse and Normalise
-Take any "new" and valid (i.e. null validation errors column) event data from the raw model and transform it to the cleansed model according to the "clean and normalise the events" requirements.
+Take any "new" and valid event data from the validated model and transform it to the cleansed model according to the "clean and normalise the events" requirements.
 
 More specifically, the cleansing and normalisation rules are:
-- De-duplicate events based on user_id, episode_id, timestamp and event_type
+- De-duplicate events based on user_id, episode_id, timestamp and event_type (pick the latest valid record by load_at from the duplicates)
 - Convert event_type to ENUM
 - Convert timestamp to TIMESTAMP type
 - Convert duration to INTEGER type, setting to null for non-play/complete events

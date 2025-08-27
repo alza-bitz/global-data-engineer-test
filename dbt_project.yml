@@ -23,9 +23,13 @@ models:
     raw:
       +materialized: table
       +schema: raw
+    validated:
+      +materialized: incremental
+      +incremental_strategy: append
+      +schema: raw
     # Cleansed models (Silver layer) - materialized as tables for incremental processing and deduplication
     cleansed:
-      +materialized: table
+      +materialized: incremental
       +incremental_strategy: merge
       +schema: cleansed
     # Analytics/marts models (Gold layer) - materialized as tables for performance

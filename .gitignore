@@ -4,7 +4,6 @@ logs/
 dbt_packages/
 
 # Local configuration
-profiles.yml
 .dbt/
 
 # Operating System and Editor specific files

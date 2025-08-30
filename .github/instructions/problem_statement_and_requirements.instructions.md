@@ -20,10 +20,10 @@ You receive raw event data in the form of JSON logs with key fields including:
 
 You also have reference files: 
 - users (user_id, signup_date, country)
-- episodes (episode_id, podcast_id, episode_title, release_date)
+- episodes (episode_id, podcast_id, episode_title, release_date, duration_seconds)
 
 ### Example Data
-- [events.json](../../example_data/event_logs.json) (sample of raw event logs)
+- [event_logs.json](../../example_data/event_logs_head.json) (sample of raw event logs)
 - [users.csv](../../example_data/users.csv) (user reference data)
 - [episodes.csv](../../example_data/episodes.csv) (episode reference data)
 

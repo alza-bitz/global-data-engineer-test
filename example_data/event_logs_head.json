@@ -1,0 +1,10 @@
+{"event_type": "pause", "user_id": "user_5", "episode_id": "ep_39", "timestamp": "2024-04-09T10:30:41", "duration": null}
+{"event_type": "play", "user_id": "user_50", "episode_id": "ep_5", "timestamp": "2024-04-21T09:13:28", "duration": 3418}
+{"event_type": "play", "user_id": "user_64", "episode_id": "ep_13", "timestamp": "2024-01-06T09:48:37", "duration": 4361}
+{"event_type": "seek", "user_id": "user_60", "episode_id": "ep_34", "timestamp": "2024-01-12T03:45:30", "duration": null}
+{"event_type": "seek", "user_id": "user_67", "episode_id": "ep_5", "timestamp": "2024-03-22T14:17:10", "duration": null}
+{"event_type": "complete", "user_id": "user_73", "episode_id": "ep_42", "timestamp": "2024-02-25T18:50:02", "duration": 4050}
+{"event_type": "pause", "user_id": "user_5", "episode_id": "ep_14", "timestamp": "2024-01-10T14:41:47", "duration": null}
+{"event_type": "play", "user_id": "user_42", "episode_id": "ep_3", "timestamp": "2024-04-28T08:58:33", "duration": 3578}
+{"event_type": "pause", "user_id": "user_37", "episode_id": "ep_21", "timestamp": "2024-01-28T18:46:06", "duration": null}
+{"event_type": "seek", "user_id": "user_60", "episode_id": "ep_15", "timestamp": "2024-03-06T15:49:24", "duration": null}

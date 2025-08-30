@@ -8,3 +8,5 @@ models:
     columns:
       - name: validation_errors
         description: "Array of validation errors"
+        tests:
+          - not_null

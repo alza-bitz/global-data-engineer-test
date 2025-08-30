@@ -19,7 +19,8 @@ Given an ELT approach, there will be four models in DBT:
 The raw model will consist of three tables, one for the raw event data and two for the reference data.
 
 #### DBT Configuration
-- Materialized: table (source of truth)
+- Materialized: incremental (to process only "new" data since last run, determined by filename column)
+- Incremental strategy: db default
 
 #### Tables
 
@@ -52,7 +53,7 @@ The validated model will consist of one table to hold both valid and invalid eve
 
 #### DBT Configuration
 - Materialized: incremental (to process only "new" data since last run, determined by load_at column)
-- Incremental strategy: append
+- Incremental strategy: db default
 
 #### Tables
 
@@ -65,7 +66,7 @@ The cleansed model will consist of one table, to hold the result of cleaning and
 
 #### DBT Configuration
 - Materialized: incremental (to process only "new" and valid data since last run, determined by load_at column and validation_errors column)
-- Incremental strategy: merge (for de-duplication)
+- Incremental strategy: db default
 
 #### Tables
 - **cleansed_events**
@@ -80,6 +81,7 @@ To support the analysis questions in part 3 of the requirements, the analytics m
 
 #### DBT Configuration
 - Materialized: table (performance for analytics)
+- Incremental strategy: db default
 
 #### Tables
 - **fact_user_interactions**
@@ -133,23 +135,23 @@ erDiagram
 
 ```
 ## Part 2: Data Pipeline
-The overall pipeline for the DuckDB target would be implemented as the following steps:
+The pipeline for the DuckDB target would be implemented as the following steps. For each step, DBT tests must be created to ensure the step works as expected.
 
 ### 1. Extract and Load
 - Full load of users and episodes data from CSV files into their own raw tables, using DBT seeds. Acceptable since these are reference data and assumed to be relatively small and stable.
-- Incremental load of any "new" event JSON data files into the raw table, using an "external" table.
+- Incremental load of any "new" event data from JSON files into the raw table, using an "external" table.
 
-Note: "new" data would typically be provided as new files, for example:
+Note 1. We assume that any "new" event data would typically be provided as new files, for example:
 ```
 data/
-  events/
-    2024-08-01/events.json
-    2024-08-02/events.json
-    2024-08-03/events.json
+  2024-08-01/events.json
+  2024-08-02/events.json
+  2024-08-03/events.json
 ```
-However, we cannot guarantee these files won't contain duplicates of data already loaded. Therefore, the "transform: cleanse and normalise" step will include a de-duplication rule to ensure that the cleansed model has no duplicates.
 
-Note: For each of the three transformation steps that follow, DBT tests must be created to ensure the transformations work as expected.
+Note 2. We assume that event data files may contain duplicates of data already loaded. Therefore, the "transform: cleanse and normalise" step will include a de-duplication rule to ensure that the cleansed model has no duplicates.
+
+Note 3. We assume that event data files are in NDJSON format, with each line representing a separate JSON object. Further, we expect each JSON object to have the same schema as the raw model. Any missing fields must fail the load step completely. Any extra fields (by name, not position - we are parsing JSON!) will be ignored.
 
 ### 2. Transform: Validation
 Validate any "new" event data in the raw model by applying checks according to the "data quality validation" requirements, updating the validated model with validated events.

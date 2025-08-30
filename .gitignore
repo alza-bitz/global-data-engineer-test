@@ -12,3 +12,8 @@ dbt_packages/
 .idea/
 *.swp
 *~
+
+# data files
+*.duckdb
+*.db
+data/

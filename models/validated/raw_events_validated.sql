@@ -1,15 +1,7 @@
-{{
-  config(
-    materialized='incremental'
-  )
-}}
-
 -- Raw events model: apply transform: validation step
 -- This model applies data quality checks to the raw events data and populates the validation_errors column
-
--- We need to populate the validation_errors column for new records since the last run, determined by load_at
--- with either an empty array (if no errors) or an array of error codes (if there are errors)
-
+-- Append rows for new events since the last run, determined by load_at
+-- The validation_errors column will be populated with either an empty array (if no errors) or an array of error codes (if there are errors)
 
 select
     event_type,
@@ -17,6 +9,7 @@ select
     episode_id,
     timestamp,
     duration,
+    filename,
     load_at,
     array_filter(array[
         case when user_id is null then 'missing_user_id' end,

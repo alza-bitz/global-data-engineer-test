@@ -14,6 +14,10 @@ models:
         description: "ISO timestamp string of the event - may contain nulls or invalid values"
       - name: duration
         description: "Duration in seconds (as string), only for play/complete events - may contain nulls or invalid values"
+      - name: filename
+        description: "Name of the file from which the record was loaded - not nullable"
+        tests:
+          - not_null
       - name: load_at
         description: "Timestamp when the record was loaded - not nullable"
         tests:

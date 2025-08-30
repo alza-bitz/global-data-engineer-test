@@ -1,12 +1,6 @@
-{{
-  config(
-    materialized='table'
-  )
-}}
-
--- Raw events model: Load event data from JSON file
--- This model loads all event data as strings initially
--- Validation will be applied in a separate transform step
+-- Raw events model: Load event data from JSON files
+-- This model loads event data as strings initially
+-- Append rows for new events since the last run, determined by filename
 
 select 
     event_type::varchar as event_type,
@@ -14,5 +8,10 @@ select
     episode_id::varchar as episode_id,
     timestamp::varchar as timestamp,
     duration::varchar as duration,
+    filename::varchar as filename,
     current_timestamp::timestamp as load_at
-from read_json_auto('{{ var("events_json_path") }}')
+from read_ndjson('{{ var("events_json_path") }}')
+
+{% if is_incremental() %}
+where filename not in (select filename from {{ this }})
+{% endif %}

@@ -8,7 +8,9 @@ dbt_packages/
 
 # Operating System and Editor specific files
 .DS_Store
-.vscode/
+.vscode/*
+!/.vscode/
+!.vscode/mcp.json
 .idea/
 *.swp
 *~

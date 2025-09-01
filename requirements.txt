@@ -2,3 +2,6 @@ dbt-core
 dbt-duckdb
 dbt-snowflake
 uv
+pytest
+hypothesis
+duckdb

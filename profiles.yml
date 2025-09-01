@@ -5,6 +5,10 @@ podcast_analytics:
       type: duckdb
       path: 'podcast_analytics.duckdb'
       threads: 4
+    test:
+      type: duckdb
+      path: "{{ var('test_db_path') }}"
+      threads: 1
     prod:
       type: snowflake
       account: "{{ env_var('SNOWFLAKE_ACCOUNT') }}"

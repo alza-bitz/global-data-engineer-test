@@ -11,9 +11,16 @@ dbt_packages/
 .vscode/*
 !/.vscode/
 !.vscode/mcp.json
+!.vscode/settings.json
 .idea/
 *.swp
 *~
+
+# Testing
+*.pyc
+__pycache__/
+.pytest_cache/
+.hypothesis/
 
 # data files
 *.duckdb

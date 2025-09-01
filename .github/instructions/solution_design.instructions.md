@@ -163,7 +163,7 @@ erDiagram
 
 ```
 ## Part 2: Data Pipeline
-The pipeline for the DuckDB target would be implemented as the following steps. For each step, pipeline tests must be created to ensure the step works as expected.
+The pipeline for the DuckDB target would be implemented as the following steps. For each step, integration tests must be created to ensure the step works as expected.
 
 ### 1. Extract and Load
 
@@ -183,8 +183,26 @@ Note 2. We assume that event data files may contain duplicates of data already l
 
 Note 3. We assume that event data files are in NDJSON format, with each line representing a separate JSON object. Further, we expect each JSON object to have the same schema as the raw model. Any missing fields must fail the load step completely. Any extra fields (by name, not position - we are parsing JSON!) will be ignored.
 
-#### Tests
-- TODO
+#### Integration Tests (BDD Style)
+
+- For all events serialised to an NDJSON file and copied to the staging directory
+- When the file is copied to the loading directory and the pipeline is run with all files globbed
+- Assert the count of loaded events
+- Assert one load_at value
+- Assert one filename value
+
+- For all events serialised to an NDJSON file and copied to the staging directory
+- When the file is copied to the loading directory and the pipeline is run with all files globbed, twice
+- Assert the count of loaded events
+- Assert one load_at value
+- Assert that load_at after the second run is the same as load_at after the first run
+- Assert one loaded filename
+
+- For all events serialised to two separate NDJSON files and copied to the staging directory
+- When the first file is copied to the loading directory and the pipeline is run once with all files globbed, then the second file is copied to the loading directory and the pipeline run again
+- Assert the count of loaded events equals the sum of event counts
+- Assert two load_at values
+- Assert two filename values
 
 ### 2. Transform: Validation
 

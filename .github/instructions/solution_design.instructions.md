@@ -4,7 +4,7 @@ applyTo: '**'
 
 # Global Senior Data Engineer Take-Home Test
 
-This solution design composes the ELT and Medallion Architecture patterns, with DBT used for data loading, data models and data transformations. The target database for local development is DuckDB, as it supports both CSV and JSON data formats natively, and is also supported by DBT. The target database for production will be Snowflake, using my personal trial account.
+This solution design composes the [ELT](https://wikipedia.org/wiki/Extract,_load,_transform) and [Medallion Architecture](https://www.databricks.com/glossary/medallion-architecture) patterns, with DBT used for data loading, data models and data transformations. The target database for local development is DuckDB, as it supports both CSV and JSON data formats natively, and is also supported by DBT. The target database for production will be Snowflake, using my personal trial account.
 
 ## Part 1: Data Modelling
 

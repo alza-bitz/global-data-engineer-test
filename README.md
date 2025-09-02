@@ -2,7 +2,7 @@
 
 ## Summary
 
-This project implements an end-to-end data pipeline for processing podcast streaming interaction logs to enable analytics around user engagement and episode performance. The solution addresses the requirements outlined in the [problem statement](.github/instructions/problem_statement_and_requirements.instructions.md) and follows the architecture described in the [solution design](.github/instructions/solution_design.instructions.md). It uses the ELT (Extract, Load, Transform) pattern with the Medallion Architecture (Bronze, Silver, Gold layers) implemented through dbt models.
+This project implements an end-to-end data pipeline for processing podcast streaming interaction logs to enable analytics around user engagement and episode performance. The solution addresses the requirements outlined in the [problem statement](.github/instructions/problem_statement_and_requirements.instructions.md) and follows the architecture described in the [solution design](.github/instructions/solution_design.instructions.md). It uses the [ELT](https://wikipedia.org/wiki/Extract,_load,_transform) (Extract, Load, Transform) pattern with the [Medallion Architecture](https://www.databricks.com/glossary/medallion-architecture) (Bronze, Silver, Gold layers) implemented through dbt models.
 
 The pipeline processes raw JSON event logs from podcast streaming interactions, validates and cleanses the data, and transforms it into an analytics-ready star schema to answer key business questions about podcast performance and user behavior.
 

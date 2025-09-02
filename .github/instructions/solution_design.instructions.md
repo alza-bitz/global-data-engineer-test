@@ -8,13 +8,14 @@ This solution design composes the ELT and Medallion Architecture patterns, with 
 
 ## Part 1: Data Modelling
 
-Given an ELT approach, there will be four models in DBT (five including seeds): 
+Given an ELT approach, there will be various models in DBT: 
 
 1. A "raw" model to hold loaded data from all three sources
 2. A "validated" model to hold the results of running checks based on the "data quality validation" in part 2 of the requirements
 3. A "cleansed" model to hold the results of the "clean and normalise the events" in part 2 of the requirements
 4. A "reference" model to hold the reference data for users and episodes (as DBT seeds)
 5. An "analytics" model to support the SQL analysis questions in part 3 of the requirements.
+6. A "questions" model to hold the SQL queries for the analysis questions.
 
 ### Raw Model (Bronze)
 The raw model will consist of one table for the raw event data.
@@ -60,7 +61,7 @@ As per raw_events, plus:
 The cleansed model will consist of one table, to hold the result of cleaning and normalising "new" and valid event data.
 
 #### DBT Configuration
-- Materialized: incremental (to process only "new" and valid data since last run, determined by load_at column and validation_errors column)
+- Materialized: table (to process only valid data, determined by validation_errors column; not incremental since we are doing de-duplication)
 - Incremental strategy: db default
 
 #### DBT Schema
@@ -113,13 +114,13 @@ To support the analysis questions in part 3 of the requirements, the analytics m
 - Indexes on foreign keys and frequently queried fields (e.g., event_type, timestamp) will improve query performance.
 
 #### DBT Configuration
-- Materialized: table (performance for analytics)
+- Materialized: incremental (to process only "new" data since last run, determined by timestamp column)
 - Incremental strategy: db default
 
 #### DBT Schema
 
 - **fact_user_interactions**
-  - interaction_id (INTEGER, PK, auto-increment)
+  - interaction_id (INTEGER, auto-increment based on the natural order of the events: timestamp, user_id, episode_id, event_type)
   - user_id (FK to dim_users)
   - episode_id (FK to dim_episodes)
   - event_type (ENUM: play, pause, seek, complete)
@@ -137,7 +138,8 @@ To support the analysis questions in part 3 of the requirements, the analytics m
   - duration_seconds (INTEGER)
 
 #### DBT Tests (Data Tests)
-- TODO
+- Fact row count matches cleansed_events row count
+- Referential integrity to users and episodes
 
 ### ERD Diagram
 ```mermaid
@@ -164,8 +166,17 @@ erDiagram
     }
     FACT_USER_INTERACTIONS }|..|{ DIM_USERS : "belongs to"
     FACT_USER_INTERACTIONS }|..|{ DIM_EPISODES : "belongs to"
-
 ```
+
+### Questions Model (Gold)
+To hold the sql queries for the analysis questions in part 3 of the requirements.
+
+#### DBT Configuration
+- Materialized: view
+
+#### DBT Tests (Data Tests)
+- For the first slice, all completion counts are positive
+
 ## Part 2: Data Pipeline
 The pipeline for the DuckDB target would be implemented as the following steps. For each step, integration tests must be created to ensure the step works as expected.
 
@@ -225,7 +236,7 @@ Note 1: the data quality checks in step 2 must be compatible with the cleansing 
 
 Note 2: if any data quality checks are modified, then validation_errors must be re-calculated for all records in the raw model, not just "new" records. This can be done by running the DBT model in full-refresh mode.
 
-#### Tests
+#### Integration Tests (BDD Style)
 - TODO
 
 ### 3. Transform: Cleanse and Normalise
@@ -240,22 +251,22 @@ More specifically, the cleansing and normalisation rules are:
 - Convert duration to INTEGER type, setting to null for non-play/complete events
 - Enforce not-null constraints on user_id, episode_id, timestamp and event_type
 
-#### Tests
+#### Integration Tests (BDD Style)
 - TODO
 
 ### 4. Transform: Analytics
 
 #### Description
-Take any "new" event data from the cleansed model and any "new" reference data from the raw model and transform it to the analytics model.
+Take any "new" event data from the cleansed model and all data from the reference model and transform it to the analytics model.
 
-#### Tests
+#### Integration Tests (BDD Style)
 - TODO
 
 ### Data Pipeline Step Co-ordination and Scheduling
 TODO
 
 ## Part 3: Analysis
-The SQL queries to answer the analysis questions in part 3 of the requirements would be implemented as DBT models, using the analytics model as the source.
+The SQL queries to answer the analysis questions in part 3 of the requirements would be implemented as DBT models, using the analytics model as the source and materialized: view.
 
 ## Part 4: Data Retention
 This is not specified in the requirements, but a typical approach would be to implement a rolling window retention policy, e.g. keep the last 6 months of event data in the cleansed and analytics models, and archive older data to cheaper storage if needed.

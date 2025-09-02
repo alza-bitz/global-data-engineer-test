@@ -32,7 +32,7 @@ models:
       +schema: cleansed
     # Analytics/marts models (Gold layer) - materialized as tables for performance
     analytics:
-      +materialized: table
+      +materialized: incremental
       +schema: analytics
 
 # Seed configurations

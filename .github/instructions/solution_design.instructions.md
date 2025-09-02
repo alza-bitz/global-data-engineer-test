@@ -201,23 +201,23 @@ Note 3. We assume that event data files are in NDJSON format, with each line rep
 #### Integration Tests (BDD Style)
 
 - For all events serialised to an NDJSON file and copied to the staging directory
-- When the file is copied to the loading directory and the pipeline is run with all files globbed
-- Assert the count of loaded events
-- Assert one load_at value
-- Assert one filename value
+  - When the file is copied to the loading directory and the pipeline is run with all files globbed
+  - Assert the count of loaded events
+  - Assert one load_at value
+  - Assert one filename value
 
 - For all events serialised to an NDJSON file and copied to the staging directory
-- When the file is copied to the loading directory and the pipeline is run with all files globbed, twice
-- Assert the count of loaded events
-- Assert one load_at value
-- Assert that load_at after the second run is the same as load_at after the first run
-- Assert one loaded filename
+  - When the file is copied to the loading directory and the pipeline is run with all files globbed, twice
+  - Assert the count of loaded events
+  - Assert one load_at value
+  - Assert that load_at after the second run is the same as load_at after the first run
+  - Assert one loaded filename
 
 - For all events serialised to two separate NDJSON files and copied to the staging directory
-- When the first file is copied to the loading directory and the pipeline is run once with all files globbed, then the second file is copied to the loading directory and the pipeline run again
-- Assert the count of loaded events equals the sum of event counts
-- Assert two load_at values
-- Assert two filename values
+  - When the first file is copied to the loading directory and the pipeline is run once with all files globbed, then the second file is copied to the loading directory and the pipeline run again
+  - Assert the count of loaded events equals the sum of event counts
+  - Assert two load_at values
+  - Assert two filename values
 
 ### 2. Transform: Validation
 

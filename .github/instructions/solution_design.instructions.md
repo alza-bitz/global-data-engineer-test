@@ -37,7 +37,7 @@ The raw model will consist of one table for the raw event data.
 With all columns nullable; we assume the event data may have missing values. Since the JSON schema for events is not nested, we can use the duckdb features to directly load the JSON event data into a flat table.
 
 #### DBT Tests (Data Tests)
-- Assert row count matches source file(s) row count
+- Row count matches source file(s) row count
 
 ### Validated Model (Bronze)
 The validated model will consist of one table to hold both valid and invalid events for further investigation. The determination of valid vs invalid records will be based on the "data quality validation" requirements.
@@ -53,8 +53,8 @@ As per raw_events, plus:
   - validation_errors (VARCHAR[], not nullable) -- list of validation errors or empty list if none
 
 #### DBT Tests (Data Tests)
-- Assert row count matches raw_events row count
-- Assert validation_errors is not null for all rows
+- Row count matches raw_events row count
+- Validation_errors is not null for all rows
 
 ### Cleansed Model (Silver)
 The cleansed model will consist of one table, to hold the result of cleaning and normalising "new" and valid event data.
@@ -72,7 +72,11 @@ The cleansed model will consist of one table, to hold the result of cleaning and
   - duration (INTEGER, nullable for non-play/complete events)
 
 #### DBT Tests (Data Tests)
-- Assert row count matches raw_events_validated row count where valiation_errors is empty
+- Not null check on all columns
+- Accepted values check on event_type
+- Duration not negative
+- Unique check on user_id, episode_id, timestamp, event_type
+- Row count matches raw_events_validated row count where validation_errors is empty
 
 ### Reference Model (Silver)
 The reference model will consist of two tables to hold the reference data for users and episodes.
@@ -99,7 +103,7 @@ We assume reference data is exported from normalised tables in an RDBMS, and the
 With all columns not nullable and column types matching what is defined for the "analytics" model.
 
 #### DBT Tests (Data Tests)
-- TODO
+- Row counts match seed file(s) row count
 
 ### Analytics Model (Gold)
 To support the analysis questions in part 3 of the requirements, the analytics model will use a star schema:

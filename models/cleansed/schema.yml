@@ -1,0 +1,49 @@
+version: 2
+
+models:
+  - name: cleansed_events
+    description: "Cleansed and normalised event data with validated records only"
+    columns:
+      - name: event_type
+        description: "Type of event - play, pause, seek, or complete"
+        data_type: varchar
+        constraints:
+          - type: not_null
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['play', 'pause', 'seek', 'complete']
+              
+      - name: user_id
+        description: "Unique identifier for the user"
+        data_type: varchar
+        constraints:
+          - type: not_null
+        tests:
+          - not_null
+          
+      - name: episode_id
+        description: "Unique identifier for the episode"
+        data_type: varchar
+        constraints:
+          - type: not_null
+        tests:
+          - not_null
+          
+      - name: timestamp
+        description: "When the event occurred"
+        data_type: timestamp
+        constraints:
+          - type: not_null
+        tests:
+          - not_null
+          
+      - name: duration
+        description: "Duration in seconds for play/complete events, null for others"
+        data_type: integer
+                
+    tests:
+      - unique:
+          column_name: "user_id || '|' || episode_id || '|' || timestamp || '|' || event_type"
+          config:
+            severity: error

@@ -20,7 +20,8 @@ select
         case when timestamp is not null and try_cast(timestamp as timestamp) is null then 'invalid_timestamp' end,
         case when timestamp is not null and try_cast(timestamp as timestamp) < '2000-01-01'::timestamp then 'timestamp_too_early' end,
         case when timestamp is not null and try_cast(timestamp as timestamp) > current_timestamp then 'timestamp_in_future' end,
-        case when event_type not in ('play', 'pause', 'seek', 'complete') then 'invalid_event_type' end,
+        case when event_type is null then 'missing_event_type' end,
+        case when event_type is not null and event_type not in ('play', 'pause', 'seek', 'complete') then 'invalid_event_type' end,
         case when event_type in ('play', 'complete') and (duration is null or try_cast(duration as integer) is null or try_cast(duration as integer) <= 0) then 'invalid_duration_for_play_complete' end,
         case when event_type not in ('play', 'complete') and duration is not null then 'non_null_duration_for_other_event' end
     ], x -> x is not null)  -- remove nulls from array

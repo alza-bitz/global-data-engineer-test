@@ -124,3 +124,23 @@ models:
         description: "Episode duration in seconds"
         tests:
           - not_null
+
+  - name: question_2_avg_listen_through_rate_by_country
+    description: "Analysis Question 2: Average listen-through rate (completion duration/episode duration) by country"
+    config:
+      meta:
+        analysis_question: "What is the average listen-through rate by country?"
+        calculation: "completion_duration / episode_duration_seconds, averaged by country"
+    columns:
+      - name: country
+        description: "Country where users are located"
+        tests:
+          - not_null
+      - name: avg_listen_through_rate
+        description: "Average ratio of completion duration to episode duration for the country"
+        tests:
+          - not_null
+      - name: total_completions
+        description: "Total number of completion events used in the calculation"
+        tests:
+          - not_null

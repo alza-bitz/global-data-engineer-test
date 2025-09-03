@@ -97,23 +97,7 @@ dbt run --select analytics
 
 ### Running Analysis Questions
 
-#### Question 1: Top 10 Most Completed Episodes (Past 7 Days)
-```bash
-# Default analysis (using 2024-01-07 as end date)
-dbt run --select question_1_top_completed_episodes
-
-# Custom date analysis
-dbt run --select question_1_top_completed_episodes --vars '{"analysis_end_date": "2024-01-05"}'
-
-# View results
-dbt show --select question_1_top_completed_episodes
-```
-
-#### Querying Results Directly
-```sql
--- Connect to DuckDB and query results
-SELECT * FROM main_analytics.question_1_top_completed_episodes;
-```
+For detailed information about running the analysis questions, see the separate [Analysis Questions](docs/analysis-questions.md) document.
 
 ### Data Refresh and Incremental Processing
 
@@ -139,9 +123,9 @@ dbt run  # Incremental models will automatically process only new data
 
 ### Approach
 
-For detailed information about the development approach used, see the [Development Approach Documentation](docs/development-approach.md).
+For detailed information about the development approach used, see the separate [Development Approach](docs/development-approach.md) document.
 
-### Running Integration Tests
+### Integration Tests
 The project includes comprehensive integration tests using pytest and hypothesis for data generation:
 
 ```bash
@@ -173,7 +157,7 @@ dbt ls --select question_1_top_completed_episodes+  # Show downstream dependenci
 
 ## Technical Architecture
 
-For detailed technical information about the data models, quality framework, and architectural decisions, see the [Technical Architecture Documentation](docs/technical-architecture.md).
+For detailed technical information about the data models, quality framework, and architectural decisions, see the separate [Technical Architecture](docs/technical-architecture.md) documentation.
 
 ## Acknowledgements
 

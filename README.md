@@ -32,23 +32,17 @@ The pipeline processes raw JSON event logs from podcast streaming interactions, 
 
 ## Prerequisites
 
-### Required Software
-- Python 3.8+
-- dbt-core
-- dbt-duckdb
+- Python 3.12+ and packages from [requirements.txt](requirements.txt)
 - DuckDB
 - Git
 
-### Development Environment
-This project is designed to run in a [dev container](https://containers.dev) with all dependencies pre-installed. The included [dev container config](.devcontainer/devcontainer.json) includes:
-- Python 3.12 and packages from [requirements.txt](requirements.txt)
-- DuckDB CLI
+Alternatively, use an editor or environment that supports [dev containers](https://containers.dev). The supplied [devcontainer.json](.devcontainer/devcontainer.json) will install all the above prerequisites.
 
 ## Usage
 
 ### Initial Setup
 1. Ensure you're in the project root directory
-2. Install dependencies (if not using dev container):
+2. Install dependencies (if not using a dev container):
 
    ```bash
    pip install -r requirements.txt

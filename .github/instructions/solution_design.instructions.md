@@ -2,8 +2,6 @@
 applyTo: '**'
 ---
 
-# Global Senior Data Engineer Take-Home Test
-
 This solution design composes the [ELT](https://wikipedia.org/wiki/Extract,_load,_transform) and [Medallion Architecture](https://www.databricks.com/glossary/medallion-architecture) patterns, with DBT used for data loading, data models and data transformations. The target database for local development is DuckDB, as it supports both CSV and JSON data formats natively, and is also supported by DBT. The target database for production will be Snowflake, using my personal trial account.
 
 ## Part 1: Data Modelling
@@ -15,7 +13,6 @@ Given an ELT approach, there will be various models in DBT:
 3. A "cleansed" model to hold the results of the "clean and normalise the events" in part 2 of the requirements
 4. A "reference" model to hold the reference data for users and episodes (as DBT seeds)
 5. An "analytics" model to support the SQL analysis questions in part 3 of the requirements.
-6. A "questions" model to hold the SQL queries for the analysis questions.
 
 ### Raw Model (Bronze)
 The raw model will consist of one table for the raw event data.
@@ -168,14 +165,17 @@ erDiagram
     FACT_USER_INTERACTIONS }|..|{ DIM_EPISODES : "belongs to"
 ```
 
-### Questions Model (Gold)
+### Analytics Model: Analysis Questions (Gold)
 To hold the sql queries for the analysis questions in part 3 of the requirements.
 
 #### DBT Configuration
 - Materialized: view
 
+#### DBT Schema
+The schema for each question is defined by the question itself.
+
 #### DBT Tests (Data Tests)
-- For the first slice, all completion counts are positive
+- For the first question, all completion counts are positive
 
 ## Part 2: Data Pipeline
 The pipeline for the DuckDB target would be implemented as the following steps. For each step, integration tests must be created to ensure the step works as expected.
@@ -266,7 +266,7 @@ Take any "new" event data from the cleansed model and all data from the referenc
 TODO
 
 ## Part 3: Analysis
-The SQL queries to answer the analysis questions in part 3 of the requirements would be implemented as DBT models, using the analytics model as the source and materialized: view.
+The SQL queries to answer the analysis questions in part 3 of the requirements would be implemented in the analytics model with materialized: view.
 
 ## Part 4: Data Retention
 This is not specified in the requirements, but a typical approach would be to implement a rolling window retention policy, e.g. keep the last 6 months of event data in the cleansed and analytics models, and archive older data to cheaper storage if needed.

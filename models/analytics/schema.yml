@@ -78,3 +78,39 @@ models:
       - name: duration
         description: "Duration in seconds (for play/complete events)"
         # Duration can be null for pause/seek events
+
+  - name: question_1_top_completed_episodes
+    description: "Analysis Question 1: The top 10 most completed episodes in the past 7 days"
+    config:
+      meta:
+        analysis_question: "What are the top 10 most completed episodes in the past 7 days?"
+        parameters:
+          - name: analysis_end_date
+            description: "End date for the 7-day analysis window"
+            default: "2024-01-07"
+            example: "2024-01-05"
+    columns:
+      - name: episode_id
+        description: "Unique identifier for the episode"
+        tests:
+          - not_null
+      - name: title
+        description: "Episode title"
+        tests:
+          - not_null
+      - name: podcast_id
+        description: "Podcast identifier"
+        tests:
+          - not_null
+      - name: completion_count
+        description: "Number of times the episode was completed in the analysis period"
+        tests:
+          - not_null
+      - name: release_date
+        description: "When the episode was originally released"
+        tests:
+          - not_null
+      - name: duration_seconds
+        description: "Episode duration in seconds"
+        tests:
+          - not_null

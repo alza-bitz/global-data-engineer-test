@@ -13,8 +13,9 @@ deduplicated_events as (
     timestamp,
     duration,
     load_at,
+    filename,
     row_number() over (
-      partition by user_id, episode_id, timestamp, event_type 
+      partition by user_id, episode_id, event_type, timestamp
       order by load_at desc
     ) as row_num
   from valid_events
@@ -35,7 +36,12 @@ select
   case 
     when event_type in ('play', 'complete') then duration::integer
     else null
-  end as duration
+  end as duration,
+  
+  -- Include load_at and filename for auditing
+  load_at,
+  filename
 
 from deduplicated_events
 where row_num = 1
+order by load_at

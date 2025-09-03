@@ -78,6 +78,16 @@ models:
       - name: duration
         description: "Duration in seconds (for play/complete events)"
         # Duration can be null for pause/seek events
+        
+      - name: load_at
+        description: "Timestamp when the data was loaded into the system"
+        tests:
+          - not_null
+          
+      - name: filename
+        description: "Source filename for auditing and data lineage"
+        tests:
+          - not_null
 
   - name: question_1_top_completed_episodes
     description: "Analysis Question 1: The top 10 most completed episodes in the past 7 days"

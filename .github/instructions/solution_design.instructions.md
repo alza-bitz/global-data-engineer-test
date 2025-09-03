@@ -73,7 +73,7 @@ The cleansed model will consist of one table, to hold the result of cleaning and
 - Not null check on all columns
 - Accepted values check on event_type
 - Duration not negative
-- Unique check on user_id, episode_id, timestamp, event_type
+- Unique check on user_id, episode_id, event_type, timestamp
 - Row count matches raw_events_validated row count where validation_errors is empty
 
 ### Reference Model (Silver)
@@ -111,13 +111,13 @@ To support the analysis questions in part 3 of the requirements, the analytics m
 - Indexes on foreign keys and frequently queried fields (e.g., event_type, timestamp) will improve query performance.
 
 #### DBT Configuration
-- Materialized: incremental (to process only "new" data since last run, determined by timestamp column)
+- Materialized: incremental (to process only "new" data since last run, determined by load_at column)
 - Incremental strategy: db default
 
 #### DBT Schema
 
 - **fact_user_interactions**
-  - interaction_id (INTEGER, auto-increment based on the natural order of the events: timestamp, user_id, episode_id, event_type)
+  - interaction_id (INTEGER, PK, hash of: user_id, episode_id, event_type, timestamp); deterministic based on business key
   - user_id (FK to dim_users)
   - episode_id (FK to dim_episodes)
   - event_type (ENUM: play, pause, seek, complete)
@@ -245,11 +245,11 @@ Note 2: if any data quality checks are modified, then validation_errors must be 
 Take any "new" and valid event data from the validated model and transform it to the cleansed model according to the "clean and normalise the events" requirements.
 
 More specifically, the cleansing and normalisation rules are:
-- De-duplicate events based on user_id, episode_id, timestamp and event_type (pick the latest valid record by load_at from the duplicates)
+- De-duplicate events based on user_id, episode_id, event_type and timestamp (pick the latest valid record by load_at from the duplicates)
 - Convert event_type to ENUM
 - Convert timestamp to TIMESTAMP type
 - Convert duration to INTEGER type, setting to null for non-play/complete events
-- Enforce not-null constraints on user_id, episode_id, timestamp and event_type
+- Enforce not-null constraints on user_id, episode_id, event_type and timestamp
 
 #### Integration Tests (BDD Style)
 - TODO

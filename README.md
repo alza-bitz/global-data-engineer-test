@@ -2,7 +2,7 @@
 
 ## Summary
 
-This project implements a data pipeline for processing podcast event logs to enable analytics on user engagement and episode performance. The solution addresses the requirements outlined in the [problem statement](.github/instructions/problem_statement_and_requirements.instructions.md) and follows the architecture described in the [solution design](.github/instructions/solution_design.instructions.md).
+A data pipeline for processing podcast event logs to enable analytics on user engagement and episode performance. The solution addresses the requirements outlined in the [problem statement](.github/instructions/problem_statement_and_requirements.instructions.md) and follows the architecture described in the [solution design](.github/instructions/solution_design.instructions.md).
 
 The pipeline processes raw JSON event logs from podcast streaming interactions, validates and cleanses the data, and transforms it into an analytics-ready star schema to answer key business questions about podcast performance and user behavior.
 

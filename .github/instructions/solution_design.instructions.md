@@ -14,7 +14,7 @@ Given an ELT approach, there will be various models in DBT:
 4. A "reference" model to hold the reference data for users and episodes (as DBT seeds)
 5. An "analytics" model to support the SQL analysis questions in part 3 of the requirements.
 
-### Raw Model (Bronze)
+### Bronze: Raw Model
 The raw model will consist of one table for the raw event data.
 
 #### DBT Configuration
@@ -37,7 +37,7 @@ With all columns nullable; we assume the event data may have missing values. Sin
 #### DBT Tests (Data Tests)
 - Row count matches source file(s) row count
 
-### Validated Model (Bronze)
+### Bronze: Validated Model
 The validated model will consist of one table to hold both valid and invalid events for further investigation. The determination of valid vs invalid records will be based on the "data quality validation" requirements.
 
 #### DBT Configuration
@@ -54,8 +54,8 @@ As per raw_events, plus:
 - Row count matches raw_events row count
 - Validation_errors is not null for all rows
 
-### Cleansed Model (Silver)
-The cleansed model will consist of one table, to hold the result of cleaning and normalising "new" and valid event data.
+### Silver: Cleansed Model
+The cleansed model will consist of one table to hold the result of cleaning and normalising "new" and valid event data.
 
 #### DBT Configuration
 - Materialized: table (to process only valid data, determined by validation_errors column; not incremental since we are doing de-duplication)
@@ -76,10 +76,8 @@ The cleansed model will consist of one table, to hold the result of cleaning and
 - Unique check on user_id, episode_id, event_type, timestamp
 - Row count matches raw_events_validated row count where validation_errors is empty
 
-### Reference Model (Silver)
-The reference model will consist of two tables to hold the reference data for users and episodes.
-
-We assume reference data is exported from normalised tables in an RDBMS, and therefore is already "clean" (integrity-checked and complete).
+### Silver: Reference Data
+Two tables to hold the reference data for users and episodes. We assume it has been exported from normalised tables in an RDBMS, and therefore is already "clean" (integrity-checked and complete).
 
 #### DBT Configuration
 - Seeds: users and episodes
@@ -103,7 +101,7 @@ With all columns not nullable and column types matching what is defined for the 
 #### DBT Tests (Data Tests)
 - Row counts match seed file(s) row count
 
-### Analytics Model (Gold)
+### Gold: Analytics Model
 To support the analysis questions in part 3 of the requirements, the analytics model will use a star schema:
 
 - Allows for efficient querying and aggregation, which is ideal for analytics.
@@ -165,7 +163,7 @@ erDiagram
     FACT_USER_INTERACTIONS }|..|{ DIM_EPISODES : "belongs to"
 ```
 
-### Analytics Model: Analysis Questions (Gold)
+### Gold: Analytics Model (Analysis Questions)
 To hold the sql queries for the analysis questions in part 3 of the requirements.
 
 #### DBT Configuration

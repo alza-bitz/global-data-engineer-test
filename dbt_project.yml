@@ -30,7 +30,7 @@ models:
     cleansed:
       +materialized: table
       +schema: cleansed
-    # Analytics/marts models (Gold layer) - materialized as tables for performance
+    # Analytics/marts models (Gold layer) - materialized as incremental for performance
     analytics:
       +materialized: incremental
       +schema: analytics
@@ -38,7 +38,7 @@ models:
 # Seed configurations
 seeds:
   podcast_analytics:
-    +schema: raw
+    +schema: cleansed
     users:
       +column_types:
         user_id: varchar(50)

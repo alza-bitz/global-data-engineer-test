@@ -5,7 +5,7 @@
       "args": [
         "mcp-server-motherduck",
         "--db-path",
-        "/workspaces/global-data-engineer-test/podcast_analytics.duckdb"
+        "podcast_analytics.duckdb"
       ]
     }
   }

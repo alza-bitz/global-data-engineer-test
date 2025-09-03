@@ -2,11 +2,6 @@
 applyTo: '**'
 ---
 
-# Global Senior Data Engineer Take-Home Test
-
-## Time Estimate
-2–3 hours (depending on familiarity with tools) 
-
 ## Scenario
 You are part of the data engineering team at a company that provides a podcast streaming app with millions of users. Your task is to build a data pipeline that processes interaction logs to enable analytics around user engagement and episode performance. 
 

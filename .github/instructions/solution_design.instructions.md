@@ -136,7 +136,7 @@ To support the analysis questions in part 3 of the requirements, the analytics m
 - Fact row count matches cleansed_events row count
 - Referential integrity to users and episodes
 
-### ERD Diagram
+#### ER Diagram
 ```mermaid
 erDiagram
     FACT_USER_INTERACTIONS {
@@ -159,8 +159,8 @@ erDiagram
         DATE release_date
         INTEGER duration_seconds
     }
-    FACT_USER_INTERACTIONS }|..|{ DIM_USERS : "belongs to"
-    FACT_USER_INTERACTIONS }|..|{ DIM_EPISODES : "belongs to"
+    DIM_USERS ||--o{ FACT_USER_INTERACTIONS : "has interactions"
+    DIM_EPISODES ||--o{ FACT_USER_INTERACTIONS : "has interactions"
 ```
 
 ### Gold: Analytics Model (Analysis Questions)

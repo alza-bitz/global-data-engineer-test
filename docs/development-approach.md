@@ -1,6 +1,6 @@
 # Development approach
 
-This project was developed using an iterative, slice-based approach as outlined in the [development approach instructions](.github/instructions/approach.instructions.md). The methodology combines:
+This project was developed using an iterative, slice-based approach as outlined in the [development approach instructions](../.github/instructions/development_approach.instructions.md). The methodology combines:
 
 ## Two-Level Iteration Strategy
 1. **Outer Level**: Analysis question slices

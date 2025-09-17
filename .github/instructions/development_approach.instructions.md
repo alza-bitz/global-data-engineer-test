@@ -4,7 +4,7 @@ applyTo: '**'
 
 We will work together to implement the solution end-to-end by "slice", where the goal of each slice is to answer one of the analysis questions in part 3.
 
-So for each question, we shall implement enough of the ELT pipeline steps needed to answer the question, in order:
+So for each question, we shall implement just enough of the ELT pipeline steps needed to answer the question, in order:
 
 1. Extract and load
 2. Transform: validation

@@ -46,7 +46,7 @@ The validated model will consist of one table to hold both valid and invalid eve
 
 #### DBT Schema
 
-- **raw_events_validated**
+- **validated_events**
 As per raw_events, plus:
   - validation_errors (VARCHAR[], not nullable) -- list of validation errors or empty list if none
 
@@ -74,7 +74,7 @@ The cleansed model will consist of one table to hold the result of cleaning and 
 - Accepted values check on event_type
 - Duration not negative
 - Unique check on user_id, episode_id, event_type, timestamp
-- Row count matches raw_events_validated row count where validation_errors is empty
+- Row count matches validated_events row count where validation_errors is empty
 
 ### Silver: Reference Data
 Two tables to hold the reference data for users and episodes. We assume it has been exported from normalised tables in an RDBMS, and therefore is already "clean" (integrity-checked and complete).
@@ -198,21 +198,21 @@ Note 3. We assume that event data files are in NDJSON format, with each line rep
 
 #### Integration Tests (BDD Style)
 
-- For all events serialised to an NDJSON file and copied to the staging directory
-  - When the file is copied to the loading directory and the pipeline is run with all files globbed
+- For all generated events serialised to an NDJSON file and copied to the staging directory
+  - When the file is copied to the loading directory and the raw dbt model is run with all files globbed
   - Assert the count of loaded events
   - Assert one load_at value
   - Assert one filename value
 
-- For all events serialised to an NDJSON file and copied to the staging directory
-  - When the file is copied to the loading directory and the pipeline is run with all files globbed, twice
+- For all generated events serialised to an NDJSON file and copied to the staging directory
+  - When the file is copied to the loading directory and the raw dbt model is run with all files globbed, twice
   - Assert the count of loaded events
   - Assert one load_at value
   - Assert that load_at after the second run is the same as load_at after the first run
   - Assert one loaded filename
 
-- For all events serialised to two separate NDJSON files and copied to the staging directory
-  - When the first file is copied to the loading directory and the pipeline is run once with all files globbed, then the second file is copied to the loading directory and the pipeline run again
+- For all generated events serialised to two separate NDJSON files and copied to the staging directory
+  - When the first file is copied to the loading directory and the raw dbt model is run once with all files globbed, then the second file is copied to the loading directory and the raw dbt model run again
   - Assert the count of loaded events equals the sum of event counts
   - Assert two load_at values
   - Assert two filename values
@@ -235,7 +235,17 @@ Note 1: the data quality checks in step 2 must be compatible with the cleansing 
 Note 2: if any data quality checks are modified, then validation_errors must be re-calculated for all records in the raw model, not just "new" records. This can be done by running the DBT model in full-refresh mode.
 
 #### Integration Tests (BDD Style)
-- TODO
+
+- For all generated valid events serialised to an NDJSON file and copied to the loading directory and the raw dbt model already run
+  - When the validated dbt model is run
+  - Assert that all validated dbt tests pass
+  - Assert that validation_errors is empty for all rows
+
+- For all generated invalid events serialised to an NDJSON file and copied to the loading directory and the raw dbt model already run
+  - When the validated dbt model is run
+  - Assert that all validated dbt tests pass
+  - Assert that validation_errors is non-empty for all rows
+  - Assert that validation_errors contains the expected error messages for each row
 
 ### 3. Transform: Cleanse and Normalise
 

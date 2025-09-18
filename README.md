@@ -74,7 +74,7 @@ Execute all pipeline steps in order:
 dbt run --select raw_events
 
 # Validate raw data
-dbt run --select raw_events_validated
+dbt run --select validated_events
 ```
 
 #### Silver Layer (Cleansed Data)
@@ -107,6 +107,12 @@ dbt run  # Incremental models will automatically process only new data
 
 ### Adding New Event Data
 1. Place new JSON event files in the `data/` directory
+
+   ```bash
+   split data_example/event_logs.json data_example/event_logs_ --suffix-length=2 --numeric-suffixes=1 --additional-suffix=.json
+   cp data_example/event_logs_01.json data/
+   ```
+
 2. Run the pipeline to process new events:
 
    ```bash

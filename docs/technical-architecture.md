@@ -8,7 +8,7 @@ This document provides detailed technical information about the Podcast Analytic
 
 ### Bronze Layer (Raw)
 - `raw_events`: Ingested JSON event data with minimal processing
-- `raw_events_validated`: Raw data with validation error tracking
+- `validated_events`: Raw data with validation error tracking
 
 ### Silver Layer (Cleansed)
 - `cleansed_events`: Cleaned, normalized, and deduplicated events
@@ -125,7 +125,7 @@ Over 15 dbt tests ensuring data quality at each layer:
   - Append-only for auditability
   - Minimal schema enforcement
   - Preserves data lineage information
-- **Tables**: `raw_events`, `raw_events_validated`
+- **Tables**: `raw_events`, `validated_events`
 
 #### Silver Layer (Cleansed Data)
 - **Purpose**: Cleaned, validated, and normalized data

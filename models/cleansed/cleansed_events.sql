@@ -1,7 +1,7 @@
 
 with valid_events as (
   select *
-  from {{ ref('raw_events_validated') }}
+  from {{ ref('validated_events') }}
   where array_length(validation_errors) = 0
 ),
 

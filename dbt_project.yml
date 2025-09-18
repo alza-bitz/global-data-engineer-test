@@ -19,13 +19,13 @@ clean-targets:
 # Model configurations following Medallion Architecture
 models:
   podcast_analytics:
-    # Raw models (Bronze layer) - materialized as tables for data persistence
+    # Raw models (Bronze layer) - materialized as incremental for performance
     raw:
       +materialized: incremental
       +schema: raw
     validated:
       +materialized: incremental
-      +schema: raw
+      +schema: validated
     # Cleansed models (Silver layer) - materialized as tables for deduplication
     cleansed:
       +materialized: table

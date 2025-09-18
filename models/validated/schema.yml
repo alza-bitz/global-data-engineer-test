@@ -1,7 +1,7 @@
 version: 2
 
 models:
-  - name: raw_events_validated
+  - name: validated_events
     description: "Raw events loaded from JSON source with validation_errors column for validation step"
     extends: 
       - raw.raw_events
